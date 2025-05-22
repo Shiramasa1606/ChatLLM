@@ -1,16 +1,26 @@
 # Python
 __pycache__/
+*.py[cod]
+*.pyo
 *.pyc
 .env
 
-# Node
+# Node / Ionic / React
 node_modules/
 build/
 dist/
+chat-llm/node_modules/
+chat-llm/build/
 
-# Ionic/React
-chat-llm/node_modules
-chat-llm/build
-
-# Modelos pesados (no subir)
+# Modelos pesados (no subirlos al repo)
 ModelosLLM/
+
+# VSCode (opcional)
+.vscode/
+
+# Logs
+*.log
+
+# Sistema operativo (opcional)
+.DS_Store
+Thumbs.db
