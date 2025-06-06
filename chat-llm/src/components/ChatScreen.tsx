@@ -30,7 +30,7 @@ const ChatScreen: React.FC = () => {
 
   const getLLMResponse = async (msg: string): Promise<string> => {
     try {
-      const response = await fetch('http://localhost:8000/chat', {
+      const response = await fetch('https://2943-201-223-112-22.ngrok-free.app', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
