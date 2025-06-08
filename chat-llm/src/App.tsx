@@ -1,6 +1,6 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import { Redirect, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';  // CAMBIO: usar BrowserRouter
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ChatScreen from './components/ChatScreen';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -18,17 +18,10 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
+/* Ionic Dark Mode */
 /* import '@ionic/react/css/palettes/dark.always.css'; */
 /* import '@ionic/react/css/palettes/dark.class.css'; */
 import '@ionic/react/css/palettes/dark.system.css';
-
 
 /* Theme variables */
 import './theme/variables.css';
@@ -38,17 +31,14 @@ setupIonicReact();
 const App: React.FC = () => {
   return (
     <IonApp>
-      <IonReactRouter>
+      <BrowserRouter>   {/* CAMBIO AQUI */}
         <IonRouterOutlet>
-          <Route path="/" exact>
-            <Redirect to="/chat" />
-          </Route>
-          <Route path="/chat" exact>
-            <ChatScreen />
-          </Route>
+          <Routes>
+            <Route path="/" element={<Navigate to="/chat" replace />} />
+            <Route path="/chat" element={<ChatScreen />} />
+          </Routes>
         </IonRouterOutlet>
-      </IonReactRouter>
-
+      </BrowserRouter>
     </IonApp>
   );
 };
