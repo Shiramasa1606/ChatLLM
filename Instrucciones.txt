@@ -1,0 +1,2 @@
+Para correr Ngrok: ngrok http --domain=chatllm.ngrok.pro 8000 (Abrir consola y pegarlo)
+Para correr Uvicorn: uvicorn app:app --reload --port 8000 (En vsc, hacer "cd Backend" y pegar el comando)
