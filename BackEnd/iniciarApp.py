@@ -20,7 +20,7 @@ if not OLLAMA_MODEL:
     raise ValueError("⚠️ Falta la variable OLLAMA_MODEL en el .env")
 
 def kill_port(port: int) -> None:
-    for proc in psutil.process_iter(['pid', 'name']):
+    for proc in psutil.process_iter(['pid', 'name']): # type: ignore
         try:
             for conn in proc.net_connections(kind='inet'):
                 if conn.laddr.port == port:

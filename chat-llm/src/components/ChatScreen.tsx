@@ -1,17 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonFooter,
-  IonTextarea,
-  IonButton
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
+  IonFooter, IonTextarea, IonButton
 } from '@ionic/react';
+import { v4 as uuidv4 } from 'uuid';
 import type { KeyboardEvent } from 'react';
 import './ChatScreen.css';
 
+// Configuramos el backend
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 const ChatScreen: React.FC = () => {
@@ -19,8 +15,15 @@ const ChatScreen: React.FC = () => {
   const [input, setInput] = useState('');
   const [cooldown, setCooldown] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(0);
+  const [sessionId, setSessionId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const cooldownRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Generamos el session_id una vez al cargar
+  useEffect(() => {
+    const id = uuidv4();
+    setSessionId(id);
+  }, []);
 
   const startCooldown = (seconds: number) => {
     setCooldown(true);
@@ -42,9 +45,8 @@ const ChatScreen: React.FC = () => {
     if (e) e.preventDefault();
     if (!input.trim() || cooldown) return;
 
-    // Bloquear YA para evitar enviar multiples mensajes
     setCooldown(true);
-    setCooldownTime(10);  // ponemos 10 de inicio, countdown empezará luego
+    setCooldownTime(10);
 
     const userMsg = { sender: 'Tú', text: input.trim() };
     setMessages(prev => [...prev, userMsg]);
@@ -54,7 +56,6 @@ const ChatScreen: React.FC = () => {
     const botReply = await getLLMResponse(prompt);
     setMessages(prev => [...prev, { sender: 'LLM', text: botReply }]);
 
-    // Ahora empieza el countdown dinámico
     cooldownRef.current = setInterval(() => {
       setCooldownTime(time => {
         if (time <= 1) {
@@ -67,13 +68,13 @@ const ChatScreen: React.FC = () => {
     }, 1000);
   };
 
-
+  // Aquí enviamos el prompt + el session_id al backend
   const getLLMResponse = async (msg: string): Promise<string> => {
     try {
       const response = await fetch(`${BACKEND_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: msg }),
+        body: JSON.stringify({ prompt: msg, session_id: sessionId }),
       });
       const data = await response.json();
       return data.response || '[Respuesta vacía del modelo]';
@@ -138,7 +139,7 @@ const ChatScreen: React.FC = () => {
             value={input}
             onIonInput={e => {
               const val = e.detail.value ?? '';
-              setInput(val.slice(0, 500));  // Limite 500 chars
+              setInput(val.slice(0, 500));
             }}
             onKeyDown={handleKeyDown}
             placeholder="Haz tu pregunta..."
